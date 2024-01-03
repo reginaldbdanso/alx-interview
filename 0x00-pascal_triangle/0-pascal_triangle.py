@@ -1,11 +1,11 @@
 #!/usr/bin/python3
 """
-Module for Pascal’s triangle of n
+Module for Pascals triangle of n
 """
 
 def pascal_triangle(n):
     """
-    returns a list of lists of integers representing the Pascal’s triangle of n   
+    returns a list of lists of integers representing the Pascals triangle of n   
     """
     if n <= 0:
         return []
