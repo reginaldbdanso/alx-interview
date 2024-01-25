@@ -50,6 +50,8 @@ class LogParser:
             "405": 0,
             "500": 0
             }
+        self.file_size = 0
+        self.line_count = 0
 
     def process_logs(self):
         try:
