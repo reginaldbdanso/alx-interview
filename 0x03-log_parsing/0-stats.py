@@ -5,7 +5,7 @@ import sys
 
 def print_stats(total_size, status_codes):
     """Prints stats"""
-    print("Total file size:", total_size)
+    print("File size:", total_size)
     for code in sorted(status_codes.keys()):
         print(f"{code}: {status_codes[code]}")
 
@@ -29,21 +29,22 @@ def process_logs():
 
     try:
         for line in sys.stdin:
-            line = line.strip()
             parsed = parse_line(line)
             if parsed is None:
                 continue
-
-            _, status_code, file_size = parsed
+            ip, status_code, file_size = parsed
             total_size += file_size
-            status_codes[status_code] = status_codes.get(status_code, 0) + 1
-
+            if status_code in status_codes:
+                status_codes[status_code] += 1
+            else:
+                status_codes[status_code] = 1
             line_count += 1
             if line_count % 10 == 0:
                 print_stats(total_size, status_codes)
-
     except KeyboardInterrupt:
         print_stats(total_size, status_codes)
+        raise KeyboardInterrupt
 
 
-process_logs()
+if __name__ == "__main__":
+    process_logs()
