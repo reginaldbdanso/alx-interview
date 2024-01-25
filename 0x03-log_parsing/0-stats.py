@@ -3,48 +3,53 @@
 import sys
 
 
-def print_stats(total_size, status_codes):
-    """Prints stats"""
-    print("File size:", total_size)
-    for code in sorted(status_codes.keys()):
-        print(f"{code}: {status_codes[code]}")
+class LogParser:
+    """Log parsing class"""
+    def __init__(self):
+        """Constructor function for LogParser class"""
+        self.status_codes = {
+            "200": 0,
+            "301": 0,
+            "400": 0,
+            "401": 0,
+            "403": 0,
+            "404": 0,
+            "405": 0,
+            "500": 0
+            }
+        self.file_size = 0
+        self.line_count = 0
 
+    def parse_line(self, line):
+        """ Read, parse and grab data"""
+        try:
+            parsed_line = line.split()
+            status_code = parsed_line[-2]
+            if status_code in self.status_codes:
+                self.status_codes[status_code] += 1
+            return int(parsed_line[-1])
+        except Exception:
+            return 0
 
-def parse_line(line):
-    """Parses a line"""
-    parts = line.split()
-    if len(parts) < 7:
-        return None
-    ip, _, _, _, status_code, file_size = parts[:6]
-    if not status_code.isdigit():
-        return None
-    return ip, int(status_code), int(file_size)
+    def print_stats(self):
+        """print stats in ascending order"""
+        print("File size: {}".format(self.file_size))
+        for key in sorted(self.status_codes.keys()):
+            if self.status_codes[key]:
+                print("{}: {}".format(key, self.status_codes[key]))
 
-
-def process_logs():
-    """Processes logs"""
-    total_size = 0
-    status_codes = {}
-    line_count = 0
-
-    try:
-        for line in sys.stdin:
-            parsed = parse_line(line)
-            if parsed is None:
-                continue
-            ip, status_code, file_size = parsed
-            total_size += file_size
-            if status_code in status_codes:
-                status_codes[status_code] += 1
-            else:
-                status_codes[status_code] = 1
-            line_count += 1
-            if line_count % 10 == 0:
-                print_stats(total_size, status_codes)
-    except KeyboardInterrupt:
-        print_stats(total_size, status_codes)
-        raise KeyboardInterrupt
+    def process_logs(self):
+        try:
+            for line in sys.stdin:
+                self.file_size += self.parse_line(line)
+                self.line_count += 1
+                if self.line_count % 10 == 0:
+                    self.print_stats()
+        except KeyboardInterrupt:
+            self.print_stats()
+            raise
 
 
 if __name__ == "__main__":
-    process_logs()
+    log_parser = LogParser()
+    log_parser.process_logs()
