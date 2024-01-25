@@ -25,14 +25,14 @@ class LogParser:
         try:
             parsed_line = line.split()
             # print(parsed_line, len(parsed_line))
-            if len(parsed_line) < 9 or parsed_line[-2] is None or
-            parsed_line[-1] is None:
+            if len(parsed_line) < 9 or parsed_line[-2] is None or\
+                    parsed_line[-1] is None:
                 return 0
             status_code = parsed_line[-2]
             if status_code in self.status_codes:
                 self.status_codes[status_code] += 1
             return int(parsed_line[-1])
-        except Exception:
+        except Exception as e:
             return 0
 
     def print_stats(self):
