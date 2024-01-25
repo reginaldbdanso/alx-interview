@@ -38,6 +38,19 @@ class LogParser:
             if self.status_codes[key]:
                 print("{}: {}".format(key, self.status_codes[key]))
 
+    def reset_status_codes(self):
+        """reset stats"""
+        self.status_codes = {
+            "200": 0,
+            "301": 0,
+            "400": 0,
+            "401": 0,
+            "403": 0,
+            "404": 0,
+            "405": 0,
+            "500": 0
+            }
+
     def process_logs(self):
         try:
             for line in sys.stdin:
@@ -45,8 +58,11 @@ class LogParser:
                 self.line_count += 1
                 if self.line_count % 10 == 0:
                     self.print_stats()
+                    self.reset_status_codes()
+
         except KeyboardInterrupt:
             self.print_stats()
+            self.reset_status_codes()
             raise
 
 
